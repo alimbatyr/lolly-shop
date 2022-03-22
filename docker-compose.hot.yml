@@ -1,0 +1,19 @@
+version: '3.6'
+
+services:
+  api:
+    stdin_open: true
+    tty: true
+    build:
+      context: ./api
+      target: dev
+      dockerfile: dockerfile
+    ports:
+      - 3000:3000
+    volumes:
+      - ./api:/opt/lolly_api
+      - /opt/lolly_api/node_modules
+    environment:
+      PORT: 3000
+      EMAIL_TOKEN_SECRET: d8bdc680dfa88d374b2a5fe708b938c4a6f2244cffb6561c51e0df446acd73da65b2473d325fe044c8b73347f912c04c202c5b5073735e4574eefcc218893fbc
+      DB_CONNECT: postgresql://postgres:postgres@192.168.55.215:5432/zher.e-batys.kz
