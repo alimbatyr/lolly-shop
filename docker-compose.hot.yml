@@ -29,6 +29,7 @@ services:
   web:
     stdin_open: true
     tty: true
+    privileged: true
     build:
       context: ./web
       target: dev
