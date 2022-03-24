@@ -16,4 +16,30 @@ services:
     environment:
       PORT: 3000
       EMAIL_TOKEN_SECRET: d8bdc680dfa88d374b2a5fe708b938c4a6f2244cffb6561c51e0df446acd73da65b2473d325fe044c8b73347f912c04c202c5b5073735e4574eefcc218893fbc
-      DB_CONNECT: postgresql://postgres:postgres@192.168.55.215:5432/zher.e-batys.kz
+      POSTGRES: postgres://postgres:postgres@postgres:5432/shop
+
+  postgres:
+    build: './postgres'
+    ports:
+      - 3001:5432
+    volumes:
+      - postgres:/var/lib/postgresql/data
+      - { type: tmpfs, target: /dev/shm, tmpfs: { size: 0x40000000 } }
+
+  web:
+    stdin_open: true
+    tty: true
+    build:
+      context: ./web
+      target: dev
+      dockerfile: dockerfile
+    ports:
+      - 8080:8080
+    volumes:
+      - ./web:/opt/lolly_web
+      - /opt/lolly_web/node_modules
+    environment:
+      VUE_APP_EBATYS_URL: http://api:3000
+
+volumes:
+  postgres:

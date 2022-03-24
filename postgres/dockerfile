@@ -1,0 +1,6 @@
+FROM kagiskz/postgres:11.7
+
+USER root
+RUN cd /usr/local/lib/postgresql \
+ && cp pg_json_decoding.so json_decoding.so
+USER postgres

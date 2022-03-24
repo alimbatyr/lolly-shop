@@ -1,0 +1,12 @@
+FROM node:14.18.3-alpine3.15 as env
+WORKDIR /opt/lolly_web
+COPY package*.json ./
+RUN npm i
+COPY . .
+
+FROM env as dev
+CMD ["npm", "run", "serve"]
+
+FROM env as prod
+RUN npm run build
+
