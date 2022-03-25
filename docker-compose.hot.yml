@@ -15,7 +15,8 @@ services:
       - /opt/lolly_api/node_modules
     environment:
       PORT: 3000
-      EMAIL_TOKEN_SECRET: d8bdc680dfa88d374b2a5fe708b938c4a6f2244cffb6561c51e0df446acd73da65b2473d325fe044c8b73347f912c04c202c5b5073735e4574eefcc218893fbc
+      JWT_SECRET: 0cec9f23aec8d3b4e4cb24c5140dd78dade4b223defa219b4b5cf7e6f52fe40820d7f3934ef20977af0ee8e951196eacfe7f1ffb878790bee607d749f9133c48
+      EMAIL_SECRET: d8bdc680dfa88d374b2a5fe708b938c4a6f2244cffb6561c51e0df446acd73da65b2473d325fe044c8b73347f912c04c202c5b5073735e4574eefcc218893fbc
       POSTGRES: postgres://postgres:postgres@postgres:5432/shop
 
   postgres:

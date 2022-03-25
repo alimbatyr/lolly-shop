@@ -15,15 +15,12 @@ app.use(cors()); // dev only
 // app.use(history()); // prod only
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get('/', (req, res, next) => {
+app.get('/', async (req, res, next) => {
   const { pg } = req.app.locals;
-  pg.query({
-    statement: `SELECT now()::text`,
+  const { rows } = await pg.query({
+    statement: `SELECT * FROM users`,
   })
-  .then(({ scalar: greeting }) => {
-    res.end(greeting);
-  })
-  .catch(next);
+  res.json(rows);
 });
 
 app.listen(PORT, () => {

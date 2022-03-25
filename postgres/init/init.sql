@@ -2,10 +2,12 @@ CREATE DATABASE shop;
 \connect shop;
 
 CREATE TABLE users (
-  user_id PRIMARY KEY NOT NULL,
+  userid VARCHAR(255) PRIMARY KEY NOT NULL,
   password VARCHAR(255) NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
+
+INSERT INTO users (userid, password) VALUES ('admin', '$2b$10$eBKoOnXMVIpg2qF4./WBF.nv.ltc04WXhCQ9CUJ58V54DWThX29/6');
 
 CREATE TABLE products (
   product_id SERIAL PRIMARY KEY,
@@ -15,7 +17,7 @@ CREATE TABLE products (
   images TEXT[], -- array of image ids
   colors TEXT[], -- colors is an array of hex or rgba values --
   sizes TEXT[], -- sizes is an array of size values --
-  user_id INTEGER NOT NULL REFERENCES users(user_id),
+  userid VARCHAR(255) NOT NULL REFERENCES users(userid),
   created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
