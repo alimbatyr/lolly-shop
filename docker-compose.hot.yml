@@ -4,6 +4,7 @@ services:
   api:
     stdin_open: true
     tty: true
+    container_name: lolly_api
     build:
       context: ./api
       target: dev
@@ -20,6 +21,7 @@ services:
       POSTGRES: postgres://postgres:postgres@postgres:5432/shop
 
   postgres:
+    restart: always
     build: './postgres'
     ports:
       - 3001:5432

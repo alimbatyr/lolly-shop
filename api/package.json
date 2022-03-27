@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
+  "private": true,
   "scripts": {
     "dev": "nodemon app.js",
     "prod": "node app.js"
@@ -17,6 +18,7 @@
     "cors": "^2.8.5",
     "express": "^4.17.3",
     "jsonwebtoken": "^8.5.1",
+    "multer": "^1.4.4",
     "pgwire": "^0.6.0"
   },
   "devDependencies": {
