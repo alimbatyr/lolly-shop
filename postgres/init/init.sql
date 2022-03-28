@@ -4,7 +4,7 @@ CREATE DATABASE shop;
 CREATE TABLE users (
   userid TEXT PRIMARY KEY NOT NULL,
   password TEXT NOT NULL,
-  created_at TIMESTAMP NOT NULL DEFAULT NOW()
+  created_at TEXT NOT NULL DEFAULT NOW()::text
 );
 
 INSERT INTO users (userid, password) VALUES ('admin', '$2b$10$eBKoOnXMVIpg2qF4./WBF.nv.ltc04WXhCQ9CUJ58V54DWThX29/6');
@@ -17,9 +17,8 @@ CREATE TABLE products (
   amount int NOT NULL,
   colors TEXT[], -- colors is an array of hex or rgba values --
   sizes TEXT[], -- sizes is an array of size values --
-  categories int[], -- categories is an array of category ids --
   userid TEXT NOT NULL REFERENCES users(userid),
-  created_at date NOT NULL DEFAULT NOW()
+  created_at TEXT NOT NULL DEFAULT NOW()::text
 );
 
 CREATE TABLE images (
@@ -28,11 +27,16 @@ CREATE TABLE images (
   filepath TEXT NOT NULL,
   mimetype TEXT NOT NULL,
   size BIGINT NOT NULL,
-  product_id INT NOT NULL REFERENCES products(product_id),
+  product_id INT NOT NULL REFERENCES products(product_id) ON DELETE CASCADE,
   originalname TEXT NOT NULL
 );
 
 CREATE TABLE categories (
   category_id SERIAL PRIMARY KEY,
   name TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE product_categories (
+  product_id INT NOT NULL REFERENCES products(product_id) ON DELETE CASCADE,
+  category_id INT NOT NULL REFERENCES categories(category_id) ON DELETE CASCADE
 );
