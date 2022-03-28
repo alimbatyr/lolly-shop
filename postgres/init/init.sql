@@ -2,8 +2,8 @@ CREATE DATABASE shop;
 \connect shop;
 
 CREATE TABLE users (
-  userid VARCHAR(255) PRIMARY KEY NOT NULL,
-  password VARCHAR(255) NOT NULL,
+  userid TEXT PRIMARY KEY NOT NULL,
+  password TEXT NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
@@ -11,20 +11,28 @@ INSERT INTO users (userid, password) VALUES ('admin', '$2b$10$eBKoOnXMVIpg2qF4./
 
 CREATE TABLE products (
   product_id SERIAL PRIMARY KEY,
-  name VARCHAR(255) NOT NULL,
+  name TEXT NOT NULL,
   description TEXT,
-  price NUMERIC(10,2) NOT NULL,
-  images TEXT[], -- array of image ids
+  price int NOT NULL,
+  amount int NOT NULL,
   colors TEXT[], -- colors is an array of hex or rgba values --
   sizes TEXT[], -- sizes is an array of size values --
-  userid VARCHAR(255) NOT NULL REFERENCES users(userid),
-  created_at TIMESTAMP NOT NULL DEFAULT NOW()
+  categories int[], -- categories is an array of category ids --
+  userid TEXT NOT NULL REFERENCES users(userid),
+  created_at date NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE images (
   image_id SERIAL PRIMARY KEY,
-  filename VARCHAR(255) NOT NULL,
-  filepath VARCHAR(255) NOT NULL,
-  mimetype VARCHAR(255) NOT NULL,
-  size INTEGER NOT NULL
+  filename TEXT NOT NULL,
+  filepath TEXT NOT NULL,
+  mimetype TEXT NOT NULL,
+  size BIGINT NOT NULL,
+  product_id INT NOT NULL REFERENCES products(product_id),
+  originalname TEXT NOT NULL
+);
+
+CREATE TABLE categories (
+  category_id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL UNIQUE
 );

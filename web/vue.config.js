@@ -4,7 +4,7 @@ module.exports = {
   devServer: {
     proxy: {
       '^/api': {
-        target: 'http://zher_api:3000',
+        target: 'http://lolly_api:3000',
         changeOrigin: true,
       },
     },
