@@ -35,10 +35,12 @@ const login = async (req, res) => {
         SELECT * FROM users
         WHERE userid = $1
       `,
-      params: [{
-        type: 'text',
-        value: userid,
-      }],
+      params: [
+        {
+          type: 'text',
+          value: userid,
+        },
+      ],
     });
 
     if (empty) {
@@ -55,15 +57,15 @@ const login = async (req, res) => {
     }
 
     const token = jwt.sign({ userid: id }, process.env.JWT_SECRET);
-    res.json({ token });
+    res.json({ token, user: { userid: id } });
   } catch (error) {
     res.status(500).json({ error });
   }
 };
 
 const authenticate_token = async (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+  const auth_header = req.headers['authorization'];
+  const token = auth_header && auth_header.split(' ')[1];
   if (!token) return res.status(401).send({ message: 'Войдите в систему' });
 
   jwt.verify(token, process.env.JWT_SECRET, (error, user) => {
@@ -73,8 +75,20 @@ const authenticate_token = async (req, res, next) => {
   });
 };
 
+const verify_token = async (req, res) => {
+  const auth_header = req.headers['authorization'];
+  const token = auth_header && auth_header.split(' ')[1];
+  if (!token) return res.status(401).send({ message: 'Войдите в систему' });
+
+  jwt.verify(token, process.env.JWT_SECRET, (error, user) => {
+    if (error) return res.status(403).send({ message: 'Ошибка пользователя' });
+    res.json({ user });
+  });
+};
+
 export default {
   user_create,
   login,
   authenticate_token,
+  verify_token,
 };

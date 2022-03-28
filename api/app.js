@@ -3,7 +3,6 @@ import pgwire from 'pgwire';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import multer from 'multer';
-import path from 'path';
 import history from 'connect-history-api-fallback';
 import products from './entities/products.js';
 import users from './entities/users.js';
@@ -21,18 +20,12 @@ const image_upload = multer({
   dest: './images',
 });
 
-app.get('/', async (req, res, next) => {
-  const { pg } = req.app.locals;
-  const { rows } = await pg.query({
-    statement: `SELECT * FROM users`,
-  });
-  res.json(rows);
-});
-
 app.get('/api/image/:filename', products.image_get);
+app.post('/api/images_delete', users.authenticate_token, products.images_delete);
 
 app.post('/api/login', users.login);
 app.post('/api/user_create', users.authenticate_token, users.user_create);
+app.get('/api/verify_token', users.verify_token);
 
 app.get('/api/products', products.products_get);
 app.post('/api/products', products.product_upsert);
@@ -40,10 +33,21 @@ app.post('/api/product_get', products.product_get);
 app.post('/api/product_delete', users.authenticate_token, products.product_delete);
 app.post(
   '/api/product_images_upload',
+  users.authenticate_token,
   image_upload.array('images'),
   products.product_images_upload
 );
 app.post('/api/product_upsert', users.authenticate_token, products.product_upsert);
+// categories routes
+app.get('/api/categories_get', products.categories_get);
+app.post('/api/category_upsert', users.authenticate_token, products.category_upsert);
+app.post('/api/category_delete', users.authenticate_token, products.category_delete);
+app.post('/api/product_category_link', users.authenticate_token, products.product_category_link);
+app.post(
+  '/api/product_category_unlink',
+  users.authenticate_token,
+  products.product_category_unlink
+);
 
 app.listen(PORT, () => {
   console.log('API listen server: ' + PORT);
