@@ -13,17 +13,17 @@ services:
     ports:
       - 29217:29217
     volumes:
-      - ./api:/opt/lolly_api
       - /opt/lolly_api/node_modules
       - dist:/opt/lolly_api/dist
+      - images:/opt/lolly_api/images
     environment:
       NODE_ENV: production
       PORT: 29217
       JWT_SECRET: 0cec9f23aec8d3b4e4cb24c5140dd78dade4b223defa219b4b5cf7e6f52fe40820d7f3934ef20977af0ee8e951196eacfe7f1ffb878790bee607d749f9133c48
       POSTGRES: postgres://postgres:postgres@lolly_postgres:5432/shop?poolMaxConnections=4&idleTimeout=900000
     links:
-      - lolly_web
-      - lolly_postgres
+      - web
+      - postgres
 
   postgres:
     privileged: true
@@ -53,3 +53,4 @@ services:
 volumes:
   postgres:
   dist:
+  images:

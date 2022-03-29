@@ -117,7 +117,7 @@ const product_images_get = async (req, res, product_id) => {
       `,
       params: [{ type: 'int4', value: product_id }],
     });
-    const src_prefix = '/api/image';
+    const src_prefix = '/image';
     const images = rows.map(
       ([image_id, filename, filepath, mimetype, size, product_id, originalname]) => ({
         image_id,
@@ -137,6 +137,7 @@ const product_images_get = async (req, res, product_id) => {
 };
 
 const image_get = async (req, res) => {
+  console.log('image_get');
   const { pg } = req.app.locals;
   const { filename } = req.params;
   try {
@@ -150,6 +151,7 @@ const image_get = async (req, res) => {
     const [, , filepath, mimetype] = rows[0];
     const dirname = path.resolve();
     const full_filepath = path.join(dirname, String(filepath));
+    console.log({ mimetype });
     return res.type(mimetype).sendFile(full_filepath);
   } catch (error) {
     res.status(500).json({ error });
@@ -168,6 +170,7 @@ async function unlink_images(filepath_array) {
 
 const products_get = async (req, res) => {
   const { pg } = req.app.locals;
+  console.log('products_get');
   try {
     const { rows } = await pg.query({
       statement: /*sql*/ `SELECT * FROM products`,
@@ -220,8 +223,7 @@ const product_categories_get = async (req, res, product_id) => {
     });
 
     return rows.map(([category_id, name]) => ({ category_id, name }));
-  } catch (error) {
-  }
+  } catch (error) {}
 };
 
 const product_upsert = async (req, res) => {

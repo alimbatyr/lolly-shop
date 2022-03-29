@@ -1,3 +1,4 @@
 .credentials.md
 node_modules
 api/images
+dist

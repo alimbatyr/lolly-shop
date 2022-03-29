@@ -12,15 +12,21 @@ const app = express();
 app.locals.pg = pgwire.pool(process.env.POSTGRES);
 
 app.use(bodyParser.json());
+const static_dist_dir = '/opt/lolly_api/dist';
+const static_images_dir = '/opt/lolly_api/images';
+app.get('/image/:filename', products.image_get);
 if (process.env.NODE_ENV === 'production') {
-  const static_dist_dir = '/opt/lolly_api/dist';
+  app.use('/images', express.static(static_images_dir));
+  // app.use('/image/*', express.static(static_images_dir));
   app.use(express.static(static_dist_dir));
   app.use(
     history({
       disableDotRule: true,
     })
   );
+  // app.use('/images', express.static(static_images_dir));
   app.use(express.static(static_dist_dir));
+
 } else {
   app.use(cors());
 }
@@ -30,22 +36,6 @@ const image_upload = multer({
   dest: './images',
 });
 
-app.get('/', async (req, res) => {
-  const { pg } = req.app.locals;
-
-  try {
-  const { scalar } = await pg.query({
-    statement: /*sql*/ `
-      SELECT now()::text;
-    `,
-  });
-  res.json(scalar);
-  } catch (error) {
-    res.status(500).json({ error });
-  }
-});
-
-app.get('/api/image/:filename', products.image_get);
 app.post('/api/images_delete', users.authenticate_token, products.images_delete);
 
 app.post('/api/login', users.login);
@@ -75,5 +65,5 @@ app.post(
 );
 
 app.listen(PORT, () => {
-  console.log('API listen server: ' + PORT);
+  console.log('Server on port: ' + PORT);
 });
