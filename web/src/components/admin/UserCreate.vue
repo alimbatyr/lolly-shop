@@ -1,8 +1,8 @@
 <template>
-  <div class="login-form">
-    <v-sheet class="login-form__container">
+  <div class="register-form">
+    <v-sheet class="register-form__container">
       <form @submit.prevent="submit">
-        <h3 class="login-form__title">Войдите в систему</h3>
+        <h3 class="register-form__title">Зарегистрировать пользователя</h3>
         <v-text-field
           v-model="userid"
           :error-messages="userid_errors"
@@ -24,6 +24,18 @@
           @blur="$v.password.$touch()"
           @click:append="showPassword = !showPassword"
         />
+        <v-text-field
+          v-model="password_repeat"
+          :error-messages="password_repeat_errors"
+          :append-icon="showPasswordRepeat ? 'mdi-eye' : 'mdi-eye-off'"
+          :type="showPasswordRepeat ? 'text' : 'password'"
+          label="Повторите пароль"
+          color="black"
+          required
+          @input="$v.password.$touch()"
+          @blur="$v.password.$touch()"
+          @click:append="showPasswordRepeat = !showPasswordRepeat"
+        />
         <div class="text-center">
         <v-btn
           class="mx-auto"
@@ -32,7 +44,7 @@
           dark
           type="submit"
           :loading="is_loading">
-          Войти
+          Зарегистрировать
         </v-btn>
         </div>
       </form>
@@ -42,7 +54,7 @@
 
 <script>
 import { validationMixin } from 'vuelidate';
-import { required } from 'vuelidate/lib/validators';
+import { required, sameAs } from 'vuelidate/lib/validators';
 import { mapActions } from 'vuex';
 
 export default {
@@ -51,12 +63,15 @@ export default {
   validations: {
     userid: { required },
     password: { required },
+    password_repeat: { required, sameAs: sameAs('password') },
   },
 
   data: () => ({
     userid: '',
     password: '',
+    password_repeat: '',
     showPassword: false,
+    showPasswordRepeat: false,
     is_loading: false,
   }),
 
@@ -65,6 +80,13 @@ export default {
       const errors = [];
       if (!this.$v.password.$dirty) return errors;
       !this.$v.password.required && errors.push('Пароль обязателен.');
+      return errors;
+    },
+    password_repeat_errors() {
+      const errors = [];
+      if (!this.$v.password_repeat.$dirty) return errors;
+      !this.$v.password_repeat.required && errors.push('Повторите пароль.');
+      !this.$v.password_repeat.sameAs && errors.push('Пароли не совпадают.');
       return errors;
     },
     userid_errors() {
@@ -76,7 +98,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(['login']),
+    ...mapActions(['login', 'user_create']),
     async submit() {
       if (this.$v.$invalid) {
         this.$v.$touch();
@@ -87,24 +109,21 @@ export default {
         password: this.password,
       };
       this.is_loading = true;
-      await this.login(payload);
+      await this.user_create(payload);
       this.is_loading = false;
-      // redirect to home
-      this.$router.push('/products');
     },
   },
 };
 </script>
 
 <style lang="scss">
-.login-form {
+.register-form {
   display: flex;
-  justify-content: center;
   align-items: center;
   margin-top: 4em;
   &__container {
     background-color: #fff;
-    padding: 7em 10em;
+    padding-right: 20em;
     width: 1000px;
   }
 

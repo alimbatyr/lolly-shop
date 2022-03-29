@@ -76,7 +76,6 @@ const product_images_delete = async (req, res) => {
     const filepath_array = rows.map(([filepath]) => filepath);
     await unlink_images(filepath_array);
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error });
   }
 };
@@ -104,7 +103,6 @@ const images_delete = async (req, res) => {
     await unlink_images(filepath_array);
     return res.json({ message: 'Файлы успешно удалены' });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error });
   }
 };
@@ -205,27 +203,24 @@ const products_get = async (req, res) => {
 const product_categories_get = async (req, res, product_id) => {
   const { pg } = req.app.locals;
   try {
-    const { rows } = await pg.query({
+    const { rows: categories_ids } = await pg.query({
       statement: /*sql*/ `
         SELECT category_id FROM product_categories
         WHERE product_id = $1
       `,
       params: [{ type: 'int4', value: product_id }],
     });
-    const promises = rows.map(async ([category_id]) => {
-      const { rows } = await pg.query({
-        statement: /*sql*/ `
-            SELECT * FROM categories
-            WHERE category_id = $1
-          `,
-        params: [{ type: 'int4', value: category_id }],
-      });
-      const [, name] = rows[0];
-      return { category_id, name };
+
+    const { rows } = await pg.query({
+      statement: /*sql*/ `
+        SELECT * FROM categories
+        WHERE category_id = ANY($1)
+      `,
+      params: [{ type: 'int4[]', value: categories_ids }],
     });
-    return await Promise.all(promises);
+
+    return rows.map(([category_id, name]) => ({ category_id, name }));
   } catch (error) {
-    throw error;
   }
 };
 
@@ -263,7 +258,6 @@ const product_upsert = async (req, res) => {
   try {
     // if product_id is not provided, insert new product
     if (!product_id) {
-      console.log('insert new product', userid);
       const { scalar } = await pg.query({
         statement: /*sql*/ `
           INSERT INTO products (name, description, price, amount, sizes, colors, userid)
@@ -335,7 +329,6 @@ const product_get = async (req, res) => {
     const categories = await product_categories_get(req, res, product.product_id);
     return res.json({ ...product, images, categories });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error });
   }
 };

@@ -1,0 +1,55 @@
+version: '3.6'
+
+services:
+  api:
+    stdin_open: true
+    tty: true
+    restart: always
+    container_name: lolly_api
+    build:
+      context: ./api
+      target: prod
+      dockerfile: dockerfile
+    ports:
+      - 29217:29217
+    volumes:
+      - ./api:/opt/lolly_api
+      - /opt/lolly_api/node_modules
+      - dist:/opt/lolly_api/dist
+    environment:
+      NODE_ENV: production
+      PORT: 29217
+      JWT_SECRET: 0cec9f23aec8d3b4e4cb24c5140dd78dade4b223defa219b4b5cf7e6f52fe40820d7f3934ef20977af0ee8e951196eacfe7f1ffb878790bee607d749f9133c48
+      POSTGRES: postgres://postgres:postgres@lolly_postgres:5432/shop?poolMaxConnections=4&idleTimeout=900000
+    links:
+      - lolly_web
+      - lolly_postgres
+
+  postgres:
+    privileged: true
+    restart: always
+    build: './postgres'
+    container_name: lolly_postgres
+    ports:
+      - 3001:5432
+    volumes:
+      - postgres:/var/lib/postgresql/data
+      - { type: tmpfs, target: /dev/shm, tmpfs: { size: 0x40000000 } }
+
+  web:
+    stdin_open: true
+    tty: true
+    build:
+      context: ./web
+      target: prod
+      dockerfile: dockerfile
+    container_name: lolly_web
+    volumes:
+      - ./web:/opt/lolly_web
+      - dist:/opt/lolly_web/dist
+    environment:
+      NODE_ENV: production
+
+volumes:
+  postgres:
+  dist:

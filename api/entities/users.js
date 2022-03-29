@@ -15,11 +15,11 @@ const user_create = async (req, res) => {
       statement: /*sql*/ `
         INSERT INTO users (userid, password)
         VALUES ($1, $2)
-        RETURNING id;
+        RETURNING userid;
       `,
-      values: [userid, password],
+      params: [{ type: 'text', value: userid }, { type: 'text', value: password }],
     });
-    return res.status(201).json({ id: scalar });
+    return res.status(201).json({ userid: scalar });
   } catch (error) {
     res.status(500).json({ error });
   }

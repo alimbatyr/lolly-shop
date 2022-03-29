@@ -12,12 +12,37 @@ const app = express();
 app.locals.pg = pgwire.pool(process.env.POSTGRES);
 
 app.use(bodyParser.json());
-app.use(cors()); // dev only
-// app.use(history()); // prod only
+if (process.env.NODE_ENV === 'production') {
+  const static_dist_dir = '/opt/lolly_api/dist';
+  app.use(express.static(static_dist_dir));
+  app.use(
+    history({
+      disableDotRule: true,
+    })
+  );
+  app.use(express.static(static_dist_dir));
+} else {
+  app.use(cors());
+}
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const image_upload = multer({
   dest: './images',
+});
+
+app.get('/', async (req, res) => {
+  const { pg } = req.app.locals;
+
+  try {
+  const { scalar } = await pg.query({
+    statement: /*sql*/ `
+      SELECT now()::text;
+    `,
+  });
+  res.json(scalar);
+  } catch (error) {
+    res.status(500).json({ error });
+  }
 });
 
 app.get('/api/image/:filename', products.image_get);

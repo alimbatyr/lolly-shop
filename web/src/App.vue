@@ -6,20 +6,22 @@
 
 <script>
 import MainLayout from '@/layouts/MainLayout.vue';
-import DefaultLayout from '@/layouts/DefaultLayout.vue';
 
 export default {
   name: 'App',
 
   components: {
     MainLayout,
-    DefaultLayout,
   },
 
   computed: {
     layout() {
-      return (this.$route.meta.layout || 'default') + '-layout';
+      return (this.$route.meta.layout || 'main') + '-layout';
     },
   },
+
+  async mounted() {
+    await this.$store.dispatch('verify_token');
+  }
 };
 </script>

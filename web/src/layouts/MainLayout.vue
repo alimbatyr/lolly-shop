@@ -1,11 +1,11 @@
 <template>
   <div class="wrapper">
     <Navbar />
+    <Sidebar v-if="$route.meta.show_sidebar" />
     <v-main>
-      <v-container>
-        <Sidebar />
+      <div class="main-container">
         <router-view />
-      </v-container>
+      </div>
     </v-main>
   </div>
 </template>

@@ -4,6 +4,7 @@ services:
   api:
     stdin_open: true
     tty: true
+    restart: always
     container_name: lolly_api
     build:
       context: ./api
@@ -17,10 +18,10 @@ services:
     environment:
       PORT: 3000
       JWT_SECRET: 0cec9f23aec8d3b4e4cb24c5140dd78dade4b223defa219b4b5cf7e6f52fe40820d7f3934ef20977af0ee8e951196eacfe7f1ffb878790bee607d749f9133c48
-      EMAIL_SECRET: d8bdc680dfa88d374b2a5fe708b938c4a6f2244cffb6561c51e0df446acd73da65b2473d325fe044c8b73347f912c04c202c5b5073735e4574eefcc218893fbc
       POSTGRES: postgres://postgres:postgres@lolly_postgres:5432/shop?poolMaxConnections=4&idleTimeout=900000
 
   postgres:
+    privileged: true
     restart: always
     build: './postgres'
     container_name: lolly_postgres
@@ -33,11 +34,11 @@ services:
   web:
     stdin_open: true
     tty: true
-    privileged: true
     build:
       context: ./web
       target: dev
       dockerfile: dockerfile
+    container_name: lolly_web
     ports:
       - 8080:8080
     volumes:
