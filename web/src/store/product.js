@@ -312,7 +312,7 @@ export default {
         return;
       }
       const new_line = '%0A';
-      let wa_link = 'https://api.whatsapp.com/send?phone=77077676688&text=';
+      let wa_link = 'https://api.whatsapp.com/send?phone=7764882858&text=';
       const product_link = `${window.location.origin}/product/`;
       cart.map(({ product_id, name, price }) => {
         const link_to_product = encodeURI(`${product_link}${product_id}`);

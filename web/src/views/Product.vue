@@ -11,7 +11,7 @@
     <div v-else-if="product">
       <v-row>
         <v-col cols="4">
-          <v-carousel hide-delimiters height="500" :show-arrows="product.images.length > 1">
+          <v-carousel hide-delimiters height="350" :show-arrows="product.images.length > 1">
             <v-carousel-item
               v-for="image in product.images"
               :key="image.image_id"
