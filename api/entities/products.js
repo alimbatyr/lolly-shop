@@ -2,7 +2,6 @@ import path from 'path';
 import fs from 'fs';
 
 // IMAGES
-
 const product_images_upload = async (req, res) => {
   const { pg } = req.app.locals;
   const { product_id } = req.body;
@@ -50,6 +49,7 @@ const product_images_upload = async (req, res) => {
     }
     return res.json({ message: 'Файлы не загружены' });
   } catch (error) {
+    throw error;
     res.status(500).json({ error });
   }
 };
@@ -76,6 +76,7 @@ const product_images_delete = async (req, res) => {
     const filepath_array = rows.map(([filepath]) => filepath);
     await unlink_images(filepath_array);
   } catch (error) {
+    throw error;
     res.status(500).json({ error });
   }
 };
@@ -103,6 +104,7 @@ const images_delete = async (req, res) => {
     await unlink_images(filepath_array);
     return res.json({ message: 'Файлы успешно удалены' });
   } catch (error) {
+    throw error;
     res.status(500).json({ error });
   }
 };
@@ -117,7 +119,7 @@ const product_images_get = async (req, res, product_id) => {
       `,
       params: [{ type: 'int4', value: product_id }],
     });
-    const src_prefix = '/image';
+    const src_prefix = process.env.NODE_ENV == 'production' ? '/image' : '/api/image';
     const images = rows.map(
       ([image_id, filename, filepath, mimetype, size, product_id, originalname]) => ({
         image_id,
@@ -132,12 +134,12 @@ const product_images_get = async (req, res, product_id) => {
     );
     return images;
   } catch (error) {
+    throw error;
     res.status(500).json({ error });
   }
 };
 
 const image_get = async (req, res) => {
-  console.log('image_get');
   const { pg } = req.app.locals;
   const { filename } = req.params;
   try {
@@ -151,9 +153,9 @@ const image_get = async (req, res) => {
     const [, , filepath, mimetype] = rows[0];
     const dirname = path.resolve();
     const full_filepath = path.join(dirname, String(filepath));
-    console.log({ mimetype });
     return res.type(mimetype).sendFile(full_filepath);
   } catch (error) {
+    throw error;
     res.status(500).json({ error });
   }
 };
@@ -170,7 +172,6 @@ async function unlink_images(filepath_array) {
 
 const products_get = async (req, res) => {
   const { pg } = req.app.locals;
-  console.log('products_get');
   try {
     const { rows } = await pg.query({
       statement: /*sql*/ `SELECT * FROM products`,
@@ -194,10 +195,10 @@ const products_get = async (req, res) => {
         };
       }
     );
-
     const products = await Promise.all(promises);
     res.json(products);
   } catch (error) {
+    throw error;
     res.status(500).json({ error });
   }
 };
@@ -294,6 +295,7 @@ const product_upsert = async (req, res) => {
     });
     res.json({ product_id: scalar });
   } catch (error) {
+    throw error;
     res.status(500).json({ error });
   }
 };
@@ -331,6 +333,7 @@ const product_get = async (req, res) => {
     const categories = await product_categories_get(req, res, product.product_id);
     return res.json({ ...product, images, categories });
   } catch (error) {
+    throw error;
     res.status(500).json({ error });
   }
 };
@@ -351,6 +354,7 @@ const product_delete = async (req, res) => {
     });
     res.json(rows);
   } catch (error) {
+    throw error;
     res.status(500).json({ error });
   }
 };
@@ -365,6 +369,7 @@ const categories_get = async (req, res) => {
     const categories = rows.map(([category_id, name]) => ({ category_id, name }));
     res.json(categories);
   } catch (error) {
+    throw error;
     res.status(500).json({ error });
   }
 };
@@ -410,6 +415,7 @@ const category_upsert = async (req, res) => {
     });
     res.json({ category_id: scalar });
   } catch (error) {
+    throw error;
     res.status(500).json({ error });
   }
 };
@@ -430,6 +436,7 @@ const category_delete = async (req, res) => {
     });
     res.json({ category_id, message: 'deleted' });
   } catch (error) {
+    throw error;
     res.status(500).json({ error });
   }
 };
@@ -462,6 +469,7 @@ const product_category_link = async (req, res) => {
     const product_categories_ids = await Promise.all(promises);
     res.json(product_categories_ids);
   } catch (error) {
+    throw error;
     res.status(500).json({ error });
   }
 };
@@ -494,6 +502,7 @@ const product_category_unlink = async (req, res) => {
     const product_categories_ids = await Promise.all(promises);
     res.json(product_categories_ids);
   } catch (error) {
+    throw error;
     res.status(500).json({ error });
   }
 };
