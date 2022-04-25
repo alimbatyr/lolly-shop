@@ -34,7 +34,7 @@ services:
       - 3001:5432
     volumes:
       - postgres:/var/lib/postgresql/data
-      - { type: tmpfs, target: /dev/shm, tmpfs: { size: 0x40000000 } }
+      - ./postgres/init/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   web:
     stdin_open: true
