@@ -1,7 +1,14 @@
 <template>
   <div class="products">
     <h1 class="mb-5">Товары</h1>
-    <div class="d-flex w100" v-if="is_loading">
+    <v-text-field
+      outlined
+      label="Поиск"
+      color="black"
+      prepend-inner-icon="mdi-magnify"
+      @input="set_search_query($event)"
+    ></v-text-field>
+    <div class="d-flex w100" v-if="products_loading">
       <v-progress-circular
         :size="200"
         :width="20"
@@ -43,15 +50,14 @@ export default {
 
   data: () => ({
     page_size: 6,
-    is_loading: false,
   }),
 
   computed: {
-    ...mapGetters('product', ['products']),
+    ...mapGetters('product', ['products', 'products_loading']),
   },
 
   methods: {
-    ...mapActions('product', ['products_get', 'categories_get']),
+    ...mapActions('product', ['set_search_query']),
   },
   watch: {
     products() {
@@ -59,12 +65,9 @@ export default {
     },
   },
   async mounted() {
-    this.is_loading = true;
-    await this.products_get();
     if (this.products.length) {
       this.setup_pagination(this.products, this.page_size);
     }
-    this.is_loading = false;
   },
 };
 </script>

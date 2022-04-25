@@ -66,6 +66,19 @@ const image_upload = multer({
   dest: './images',
 });
 
+app.get('/', async (req, res) => {
+  const { pg } = app.locals;
+  try {
+    const { scalar } = await pg.query({
+      statement: /*sql*/ `
+        SELECT now()::text;
+      `,
+    });
+    res.send(scalar);
+  } catch (error) {
+    console.log(error);
+  }
+});
 app.post('/api/images_delete', users.authenticate_token, products.images_delete);
 
 app.post('/api/login', users.login);

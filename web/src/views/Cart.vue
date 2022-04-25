@@ -11,11 +11,12 @@
       ></v-progress-circular>
     </div>
     <h3 v-else-if="!items.length">
-      Корзина пуста
+      Корзина пуста.
+      <router-link to="/products">К товарам.</router-link>
     </h3>
     <v-row class="mb-2" v-else>
-      <v-col cols="auto" v-for="product in items" :key="product.product_id">
-        <Card :product="product"></Card>
+      <v-col cols="auto" v-for="product in items" :key="product.cart_id">
+        <Card :product="product" :is_cart="true"></Card>
       </v-col>
     </v-row>
     <div class="text-center" v-if="cart.length > page_size">
@@ -27,12 +28,13 @@
         @input="page_change_handler"
       ></v-pagination>
     </div>
-    <div class="cart__actions d-flex mt-15">
-      <v-spacer></v-spacer>
-      <v-btn color="black" dark class="mr-3" @click="set_cart([])"> Очистить корзину </v-btn>
-      <v-btn color="black" dark class="" @click="generate_wa_order">
-        Оформить заказ
-      </v-btn>
+    <div class="cart__actions d-flex mt-15 flex-wrap align-center">
+      <v-btn class="ma-3" color="black" dark @click="set_cart([])"> Очистить корзину </v-btn>
+      <v-btn class="ma-3" color="black" dark @click="generate_wa_order"> Оформить заказ </v-btn>
+      <span class="ma-3 font-weight-bold">
+        <span>Общая стоимость: </span>
+        <span v-text="cart_total_cost"></span>
+      </span>
     </div>
   </div>
 </template>
@@ -57,7 +59,7 @@ export default {
   }),
 
   computed: {
-    ...mapGetters('product', ['cart']),
+    ...mapGetters('product', ['cart', 'cart_total_cost']),
   },
 
   watch: {
@@ -85,5 +87,10 @@ export default {
   &__item {
     user-select: none;
   }
+}
+
+.cart__actions {
+  margin-left: -12px;
+  margin-right: -12px;
 }
 </style>

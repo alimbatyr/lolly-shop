@@ -8,7 +8,7 @@
         <Categories></Categories>
       </v-tab-item>
       <v-tab-item>
-        <h1>Таблица Товаров</h1>
+        <Products></Products>
       </v-tab-item>
       <v-tab-item>
         <UserCreate></UserCreate>
@@ -25,12 +25,14 @@
 import { mapActions } from 'vuex';
 import Categories from '@/components/admin/Categories.vue';
 import UserCreate from '@/components/admin/UserCreate.vue';
+import Products from '@/components/admin/Products.vue';
 
 export default {
   name: 'Admin',
   components: {
     Categories,
     UserCreate,
+    Products,
   },
   data: () => ({
     tab: 0,

@@ -61,6 +61,20 @@
       </template>
     </v-combobox>
 
+    <v-combobox v-model="colors" :items="[]" label="Цвета" color="black" multiple chips>
+      <template v-slot:selection="{ attrs, item, select, selected }">
+        <v-chip
+          v-bind="attrs"
+          :input-value="selected"
+          close
+          @click="select"
+          @click:close="remove_color(item)"
+        >
+          <strong v-text="item"></strong>
+        </v-chip>
+      </template>
+    </v-combobox>
+
     <v-select
       v-model="selected_categories"
       :items="available_categories"
@@ -71,6 +85,8 @@
       item-text="name"
       return-object
     ></v-select>
+
+
 
     <v-file-input
       v-model="images"
@@ -223,6 +239,7 @@ export default {
       this.amount = '';
       this.sizes = [];
       this.colors = [];
+      this.colors = [];
       this.images = [];
       this.previous_images = [];
       this.selected_categories = [];
@@ -234,6 +251,10 @@ export default {
     remove_size(item) {
       this.sizes.splice(this.sizes.indexOf(item), 1);
       this.sizes = [...this.sizes];
+    },
+    remove_color(item) {
+      this.colors.splice(this.colors.indexOf(item), 1);
+      this.colors = [...this.colors];
     },
     remove_image(index) {
       this.previous_images.splice(index, 1);

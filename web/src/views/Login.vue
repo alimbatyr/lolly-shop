@@ -114,4 +114,12 @@ export default {
     margin-bottom: 2em;
   }
 }
+
+@media (max-width: 768px) {
+  .login-form {
+    &__container {
+      padding: 0;
+    }
+  }
+}
 </style>

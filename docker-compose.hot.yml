@@ -4,7 +4,6 @@ services:
   api:
     stdin_open: true
     tty: true
-    restart: always
     container_name: lolly_api
     build:
       context: ./api
@@ -21,15 +20,18 @@ services:
       POSTGRES: postgres://postgres:postgres@lolly_postgres:5432/shop?poolMaxConnections=4&idleTimeout=900000
 
   postgres:
+    restart: unless-stopped
     privileged: true
-    restart: always
     build: './postgres'
     container_name: lolly_postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
     ports:
-      - 3001:5432
+      - '5432:5432'
     volumes:
       - postgres:/var/lib/postgresql/data
-      - { type: tmpfs, target: /dev/shm, tmpfs: { size: 0x40000000 } }
+      - ./postgres/init/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   web:
     stdin_open: true

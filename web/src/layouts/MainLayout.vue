@@ -3,9 +3,10 @@
     <Navbar />
     <Sidebar v-if="$route.meta.show_sidebar" />
     <v-main>
-      <div class="main-container">
+      <div class="main-container" v-if="$route.path != '/'">
         <router-view />
       </div>
+      <router-view v-else />
     </v-main>
   </div>
 </template>
