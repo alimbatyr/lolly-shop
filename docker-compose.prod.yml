@@ -30,8 +30,11 @@ services:
     restart: always
     build: './postgres'
     container_name: lolly_postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
     ports:
-      - 3001:5432
+      - '5432:5432'
     volumes:
       - postgres:/var/lib/postgresql/data
       - ./postgres/init/init.sql:/docker-entrypoint-initdb.d/init.sql
